@@ -1,0 +1,10 @@
+c:\users\stas\documents\visual studio 2012\Projects\VK_api_img_post\VK_api_img_post\bin\Debug\VK_api_img_post.exe.config
+c:\users\stas\documents\visual studio 2012\Projects\VK_api_img_post\VK_api_img_post\bin\Debug\VK_api_img_post.exe
+c:\users\stas\documents\visual studio 2012\Projects\VK_api_img_post\VK_api_img_post\bin\Debug\VK_api_img_post.pdb
+c:\users\stas\documents\visual studio 2012\Projects\VK_api_img_post\VK_api_img_post\bin\Debug\xNet.dll
+c:\users\stas\documents\visual studio 2012\Projects\VK_api_img_post\VK_api_img_post\obj\Debug\VK_api_img_post.csprojResolveAssemblyReference.cache
+c:\users\stas\documents\visual studio 2012\Projects\VK_api_img_post\VK_api_img_post\obj\Debug\VK_api_img_post.Form1.resources
+c:\users\stas\documents\visual studio 2012\Projects\VK_api_img_post\VK_api_img_post\obj\Debug\VK_api_img_post.Properties.Resources.resources
+c:\users\stas\documents\visual studio 2012\Projects\VK_api_img_post\VK_api_img_post\obj\Debug\VK_api_img_post.csproj.GenerateResource.Cache
+c:\users\stas\documents\visual studio 2012\Projects\VK_api_img_post\VK_api_img_post\obj\Debug\VK_api_img_post.exe
+c:\users\stas\documents\visual studio 2012\Projects\VK_api_img_post\VK_api_img_post\obj\Debug\VK_api_img_post.pdb
