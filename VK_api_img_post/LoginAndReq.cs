@@ -15,6 +15,36 @@ namespace VK_api_img_post
     {
         public static List<string> friendsList = new List<string>();
 
+        public static bool ValidationAuth(int clientID, string login, string pass)
+        {
+            using (HttpRequest req = new HttpRequest())
+            {
+                //req.UserAgent = HttpHelper.FirefoxUserAgent();
+                CookieDictionary cookie = new CookieDictionary(false);
+                req.Cookies = cookie;
+                req.Get(String.Format("https://login.vk.com/?act=login&email={0}&pass={1}", login, pass));
+
+                string scope = "notify,friends,photos,audio,video,docs,notes,pages,status,offers,questions,wall,groups,messages,notifications,stats,ads,offline";
+
+                string data = req.Get("https://oauth.vk.com/authorize?client_id=" + clientID + "&scope=" + scope + "&redirect_uri=http://oauth.vk.com/blank.html&display=touch&response_type=token").ToString();
+                req.AllowAutoRedirect = false;
+                req.Get(data.Substring("<form method=\"post\" action=\"", "\">"));
+
+                char[] symb = { '=', '&' };
+                string[] splitData = req.Response.Location.Split(symb);
+
+                if (splitData.Length > 5)
+                {
+                    string token = splitData[1];
+                    string userID = splitData[5];
+                    return true;
+                }
+                else
+                    return false;
+
+            }
+        }
+
         public static void Auth(int clientID, string login, string pass)
         {
             using (HttpRequest req = new HttpRequest())
@@ -41,7 +71,7 @@ namespace VK_api_img_post
                 getFriends(req, token, userID); //get friens list
 
                 string photosGetWallUploadServerString = photosGetWallUploadServer(userID, token, req);
-                string photosUploadPhotoToURLString = photosUploadPhotoToURL(photosGetWallUploadServerString, "F:\\1.JPG").ToString();
+                string photosUploadPhotoToURLString = photosUploadPhotoToURL(photosGetWallUploadServerString, "D:\\1.JPG").ToString();
 
                 JObject jObject = JObject.Parse(photosUploadPhotoToURLString);
                 string server = jObject["server"].ToString();
@@ -53,7 +83,7 @@ namespace VK_api_img_post
                 JObject jObject1 = JObject.Parse(photosSaveWallPhotoString);
                 int owner_id = Convert.ToInt32(jObject1["response"]["owner_id"]);
                 string attachments = jObject1["response"]["id"].ToString();
-                string publish_date = jObject1["response"]["date"].ToString();
+                string publish_date = jObject1["response"]["created"].ToString();
 
                 string wallPostString = wallPost(owner_id, 0, 0, "privet", attachments, publish_date, token, req);
             }
@@ -73,11 +103,11 @@ namespace VK_api_img_post
 
             //MessageBox.Show(token + " " + userID + " getFriends");
         }
-        
-        private static string photosGetWallUploadServer(string group_id, string token, HttpRequest req)    //получить сервер для загрузки фото на стену (возвращает upload_url)
+
+        private static string photosGetWallUploadServer(string userID, string token, HttpRequest req)    //получить сервер для загрузки фото на стену (возвращает upload_url)
         {
             string request_path = "https://api.vk.com/method/photos.getWallUploadServer?";    //формируем ссылку с нужными параметрами для запроса к API
-           // request_path += "group_id" + group_id;
+            request_path += "group_id" + userID;
             request_path += "&access_token=" + token;
 
             string responce = req.Get(request_path).ToString();
@@ -115,7 +145,7 @@ namespace VK_api_img_post
             request_path += "owner_id=" + owner_id;
             request_path += "&access_token=" + token;
             if (message != string.Empty) request_path += "&message=" + message;
-            if (attachments != string.Empty) request_path += "&attachments=photo" + attachments;
+            if (attachments != string.Empty) request_path += "&attachments=" + attachments;
 
            // request_path += "&friends_only=" + friends_only;
            // request_path += "&from_group=" + from_group;
