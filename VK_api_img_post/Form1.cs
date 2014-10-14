@@ -19,6 +19,8 @@ namespace VK_api_img_post
             InitializeComponent();
         }
 
+        public static Dictionary<string, string> validUserDictionary = new Dictionary<string, string>();
+
         private DialogResult STAShowDialog(FileDialog dialog)
         {
             DialogState state = new DialogState();
@@ -33,6 +35,8 @@ namespace VK_api_img_post
 
         private void load_btn_Click(object sender, EventArgs e)
         {
+            int validUsr = 0;
+            int notValidUser = 0;
             String pathLocation = String.Empty;
             OpenFileDialog frm = new OpenFileDialog();
             frm.InitializeLifetimeService();
@@ -52,9 +56,26 @@ namespace VK_api_img_post
 
             for (int i = 0; i < LoadList.userDictionary.Count; i++)
             {
-                LoginAndReq.Auth(4587698, LoadList.userDictionary.ElementAt(i).Key, LoadList.userDictionary.ElementAt(i).Value);
-                MessageBox.Show("DONE");
+                bool valid;
+                valid = LoginAndReq.ValidationAuth(4587698, LoadList.userDictionary.ElementAt(i).Key, LoadList.userDictionary.ElementAt(i).Value);
+
+                if (valid)
+                {
+                    validUserDictionary.Add(LoadList.userDictionary.ElementAt(i).Key, LoadList.userDictionary.ElementAt(i).Value);
+                    validUser_lbl.Text = (++validUsr).ToString();
+                }
+                else
+                {
+                    notValidUser_lbl.Text = (++notValidUser).ToString();
+                }
+                
             }
+            MessageBox.Show("DONE");
+        }
+
+        private void start_bnt_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
