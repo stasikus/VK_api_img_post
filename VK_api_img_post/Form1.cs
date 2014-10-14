@@ -19,34 +19,42 @@ namespace VK_api_img_post
             InitializeComponent();
         }
 
-        private void Auth(string login, string pass)
+        private DialogResult STAShowDialog(FileDialog dialog)
         {
-            using (var req = new HttpRequest())
-            {
-                //req.UserAgent = HttpHelper.FirefoxUserAgent();
-                CookieDictionary cookie = new CookieDictionary(false);
-                req.Cookies = cookie;
-                req.Get(String.Format("https://login.vk.com/?act=login&email={0}&pass={1}", login, pass));
-
-                string data = req.Get("https://oauth.vk.com/authorize?client_id=4588326&scope=notify,friends,photos,status,wall&redirect_uri=http://oauth.vk.com/blank.html&display=touch&response_type=token").ToString();
-                req.AllowAutoRedirect = false;
-                req.Get(data.Substring("<form method=\"post\" action=\"", "\">"));
-
-                char[] symb = { '=', '&' };
-                string[] splitData = req.Response.Location.Split(symb);
-
-                string token = splitData[1];
-                string userID = splitData[5];
-
-                string friendsList = req.Get(String.Format("https://api.vk.com/method/friends.get?user_id={0}&v=5.25&access_token={1}", userID, token)).ToString();
-                
-                MessageBox.Show(token);
-            }
+            DialogState state = new DialogState();
+            state.dialog = dialog;
+            System.Threading.Thread t = new System.Threading.Thread(state.ThreadProcShowDialog);
+            t.SetApartmentState(System.Threading.ApartmentState.STA);
+            t.Start();
+            t.IsBackground = true;
+            t.Join();
+            return state.result;
         }
 
         private void load_btn_Click(object sender, EventArgs e)
         {
-            Auth("+380631818725", "qazmko123123123");
+            String pathLocation = String.Empty;
+            OpenFileDialog frm = new OpenFileDialog();
+            frm.InitializeLifetimeService();
+            frm.Filter = "Config Files (*.txt)|*.txt";
+            frm.Title = "Browse Config file";
+            DialogResult dialRes = STAShowDialog(frm);
+
+            if (dialRes == DialogResult.OK)
+                pathLocation = frm.FileName;
+
+            string path;
+            if (pathLocation != "")
+            {
+                path = pathLocation;
+                LoadList.loadUsersList(path);
+            }
+
+            for (int i = 0; i < LoadList.userDictionary.Count; i++)
+            {
+                LoginAndReq.Auth(4587698, LoadList.userDictionary.ElementAt(i).Key, LoadList.userDictionary.ElementAt(i).Value);
+                MessageBox.Show("DONE");
+            }
         }
     }
 }

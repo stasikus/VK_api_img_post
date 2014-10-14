@@ -8,3 +8,14 @@ c:\users\stas\documents\visual studio 2012\Projects\VK_api_img_post\VK_api_img_p
 c:\users\stas\documents\visual studio 2012\Projects\VK_api_img_post\VK_api_img_post\obj\Debug\VK_api_img_post.csproj.GenerateResource.Cache
 c:\users\stas\documents\visual studio 2012\Projects\VK_api_img_post\VK_api_img_post\obj\Debug\VK_api_img_post.exe
 c:\users\stas\documents\visual studio 2012\Projects\VK_api_img_post\VK_api_img_post\obj\Debug\VK_api_img_post.pdb
+C:\Users\s.o.kravchenko\Documents\GitHub\VK_api_img_post\VK_api_img_post\bin\Debug\VK_api_img_post.exe.config
+C:\Users\s.o.kravchenko\Documents\GitHub\VK_api_img_post\VK_api_img_post\obj\Debug\VK_api_img_post.exe
+C:\Users\s.o.kravchenko\Documents\GitHub\VK_api_img_post\VK_api_img_post\obj\Debug\VK_api_img_post.pdb
+C:\Users\s.o.kravchenko\Documents\GitHub\VK_api_img_post\VK_api_img_post\bin\Debug\VK_api_img_post.exe
+C:\Users\s.o.kravchenko\Documents\GitHub\VK_api_img_post\VK_api_img_post\bin\Debug\VK_api_img_post.pdb
+C:\Users\s.o.kravchenko\Documents\GitHub\VK_api_img_post\VK_api_img_post\obj\Debug\VK_api_img_post.csprojResolveAssemblyReference.cache
+C:\Users\s.o.kravchenko\Documents\GitHub\VK_api_img_post\VK_api_img_post\obj\Debug\VK_api_img_post.Form1.resources
+C:\Users\s.o.kravchenko\Documents\GitHub\VK_api_img_post\VK_api_img_post\obj\Debug\VK_api_img_post.Properties.Resources.resources
+C:\Users\s.o.kravchenko\Documents\GitHub\VK_api_img_post\VK_api_img_post\obj\Debug\VK_api_img_post.csproj.GenerateResource.Cache
+C:\Users\s.o.kravchenko\Documents\GitHub\VK_api_img_post\VK_api_img_post\bin\Debug\Newtonsoft.Json.dll
+C:\Users\s.o.kravchenko\Documents\GitHub\VK_api_img_post\VK_api_img_post\bin\Debug\Newtonsoft.Json.xml
