@@ -42,7 +42,7 @@ namespace VK_api_img_post
             }
             catch (Exception)
             {
-                MessageBox.Show("Файл в неверном формате");
+                MessageBox.Show("Файл в неверном формате или возможно в файле имеются дубликаты");
                 accsList.Clear();
             }
 

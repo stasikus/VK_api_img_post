@@ -8,6 +8,8 @@ using xNet.Net;
 using xNet.Text;
 using Newtonsoft.Json.Linq;
 using System.Net;
+using System.Threading;
+using System.IO;
 
 namespace VK_api_img_post
 {
@@ -15,16 +17,15 @@ namespace VK_api_img_post
     {
         public static List<string> friendsList = new List<string>();
 
-        public static bool ValidationAuth(int clientID, string login, string pass)
+        public static bool ValidationAuth(string clientID, string login, string pass)
         {
             using (HttpRequest req = new HttpRequest())
             {
-                //req.UserAgent = HttpHelper.FirefoxUserAgent();
                 CookieDictionary cookie = new CookieDictionary(false);
                 req.Cookies = cookie;
                 req.Get(String.Format("https://login.vk.com/?act=login&email={0}&pass={1}", login, pass));
 
-                string scope = "notify,friends,photos,audio,video,docs,notes,pages,status,offers,questions,wall,groups,messages,notifications,stats,ads,offline";
+                string scope = "notify,friends,photos,audio,video,docs,notes,pages,status,offers,questions,wall,groups,messages,notifications,stats,ads,offline"; //permissions for user
 
                 string data = req.Get("https://oauth.vk.com/authorize?client_id=" + clientID + "&scope=" + scope + "&redirect_uri=http://oauth.vk.com/blank.html&display=touch&response_type=token").ToString();
                 req.AllowAutoRedirect = false;
@@ -33,7 +34,7 @@ namespace VK_api_img_post
                 char[] symb = { '=', '&' };
                 string[] splitData = req.Response.Location.Split(symb);
 
-                if (splitData.Length > 5)
+                if (splitData.Length > 5) // is user valid
                 {
                     string token = splitData[1];
                     string userID = splitData[5];
@@ -45,10 +46,13 @@ namespace VK_api_img_post
             }
         }
 
-        public static void Auth(int clientID, string login, string pass)
+        public static void Auth(string clientID, string login, string pass, string photoPath, int sleepFrom, int sleepTo, string msg, Label sendMsg_l, Label notSendMsg_l)
         {
             using (HttpRequest req = new HttpRequest())
             {
+                int sendMsg = 0;
+                int notSendMsg = 0;
+                
                 //req.UserAgent = HttpHelper.FirefoxUserAgent();
                 CookieDictionary cookie = new CookieDictionary(false);
                 req.Cookies = cookie;
@@ -63,45 +67,91 @@ namespace VK_api_img_post
                 char[] symb = { '=', '&' };
                 string[] splitData = req.Response.Location.Split(symb);
 
-                string token = splitData[1];
-                string userID = splitData[5];
-
-                //MessageBox.Show(token + " " + userID);
-
+                string token = splitData[1]; //token for current user
+                string userID = splitData[5]; //user_id for current user
+                
                 getFriends(req, token, userID); //get friens list
 
-                string photosGetWallUploadServerString = photosGetWallUploadServer(userID, token, req);
-                string photosUploadPhotoToURLString = photosUploadPhotoToURL(photosGetWallUploadServerString, "D:\\1.JPG").ToString();
+                string photosGetWallUploadServerString = photosGetWallUploadServer(userID, token, req); //get vk URL for upload img
+
+                string photosUploadPhotoToURLString = photosUploadPhotoToURL(photosGetWallUploadServerString, photoPath).ToString(); //get data from upload img
 
                 JObject jObject = JObject.Parse(photosUploadPhotoToURLString);
                 string server = jObject["server"].ToString();
                 string photo = jObject["photo"].ToString();
                 string hash = jObject["hash"].ToString();
 
-                string photosSaveWallPhotoString = photosSaveWallPhoto(server, photo, hash, req, token).ToString();
+                string photosSaveWallPhotoString = photosSaveWallPhoto(server, photo, hash, req, token).ToString(); //save img to wall
 
                 JObject jObject1 = JObject.Parse(photosSaveWallPhotoString);
                 int owner_id = Convert.ToInt32(jObject1["response"]["owner_id"]);
                 string attachments = jObject1["response"]["id"].ToString();
-                string publish_date = jObject1["response"]["created"].ToString();
 
-                string wallPostString = wallPost(owner_id, 0, 0, "privet", attachments, publish_date, token, req);
+                string log = "ID юзера кем было отправленно: " + owner_id + "\r\nВсего друзей: " + friendsList.Count + "\r\nКому было отправленно:"; //topic at the file
+                StreamWriter sw = new StreamWriter(@"F:\\outLog.txt", true, System.Text.Encoding.UTF8);
+                sw.WriteLine(log);
+
+                for (int i = 0; i < friendsList.Count; i++)
+                {
+                    string wallPostString = wallPost(Convert.ToInt32(friendsList[i]), 0, 0, msg, attachments, token, req); //post msg to wall
+                    int randomNum;
+
+                    if (wallPostString.Length < 150)
+                    {
+                        sendMsg_l.BeginInvoke((Action)delegate
+                        {
+                            sendMsg++;
+                            sendMsg_l.Text = sendMsg.ToString();
+                        });
+
+                        log = friendsList[i] + " - отправленно";
+                        sw.WriteLine(log);
+                        //MessageBox.Show("Сообщение отправленно");
+                    }
+                    else
+                    {
+                        notSendMsg_l.BeginInvoke((Action)delegate
+                        {
+                            notSendMsg++;
+                            notSendMsg_l.Text = notSendMsg.ToString();
+                        });
+
+                        log = friendsList[i] + " - не отправленно";
+                        sw.WriteLine(log);
+                        //MessageBox.Show("Сообщение не отправленно");
+                    }
+
+                    log = "";
+                    Random random = new Random();
+                    randomNum = random.Next(sleepFrom, sleepTo);
+
+                    Thread.Sleep(randomNum*1000); //random thread sleep between posting the message
+                }
+                log = "\r\n---------------\r\n";
+                sw.Close();
+
+                
             }
         }
 
         public static void getFriends(HttpRequest req, string token, string userID)
         {
             string friendsListJson = req.Get(String.Format("https://api.vk.com/method/friends.get?user_id={0}&v=5.25&access_token={1}", userID, token)).ToString();
-            JObject jObject = JObject.Parse(friendsListJson);
-            string items = jObject["response"]["items"].ToString();
+            JObject jObjectItems = JObject.Parse(friendsListJson);
+            string items = jObjectItems["response"]["items"].ToString();
             char[] symb = { ' ', ',' };
             string[] s = items.Split(symb);
             for (int i = 2; i < s.Length; i+=3)
             {
-                friendsList.Add(s[i]);
+                if (i != Convert.ToInt32(s.Length-1))
+                    friendsList.Add(s[i]);
+                else
+                {
+                    s[i] = s[i].Substring(0, s[i].Length - 5); //remove extra symbols in the end of list
+                    friendsList.Add(s[i]);
+                }
             }
 
-            //MessageBox.Show(token + " " + userID + " getFriends");
         }
 
         private static string photosGetWallUploadServer(string userID, string token, HttpRequest req)    //получить сервер для загрузки фото на стену (возвращает upload_url)
@@ -137,7 +187,7 @@ namespace VK_api_img_post
             return json;  //возвращаем объект класса JObject
         }
 
-        private static string wallPost(int owner_id, int friends_only, int from_group, string message, string attachments, string publish_date, string token, HttpRequest req)                    //пост на стенку
+        private static string wallPost(int owner_id, int friends_only, int from_group, string message, string attachments, string token, HttpRequest req)                    //пост на стенку
         {
             if (message == "" && attachments == "") return "Error: message and attachments is empty!";                //не вызывать API, если msg and attach пустые
 
@@ -148,15 +198,9 @@ namespace VK_api_img_post
             if (attachments != string.Empty) request_path += "&attachments=" + attachments;
 
            // request_path += "&friends_only=" + friends_only;
-           // request_path += "&from_group=" + from_group;
-            
-           // if (attachments != string.Empty) request_path += "&attachments=photo" + attachments;
-           // if (publish_date != string.Empty) request_path += "&publish_date=" + publish_date;
-            //request_path += "&v=5.25";
-            //request_path += "&access_token=" + token;                                                          //токен (задается в конструкторе)
+           // request_path += "&from_group=" + from_group;                                                       //токен (задается в конструкторе)
 
             string responce = req.Get(request_path).ToString();
-
             return responce;
         }
     }
