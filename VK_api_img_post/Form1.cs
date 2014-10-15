@@ -37,8 +37,12 @@ namespace VK_api_img_post
 
         private void load_btn_Click(object sender, EventArgs e)
         {
+            LoadList.userDictionary = new Dictionary<string, string>();
+            validUserDictionary = new Dictionary<string, string>();
             int validUsr = 0;
             int notValidUser = 0;
+            validUser_lbl.Text = "0";
+            notValidUser_lbl.Text = "0";
             String pathLocation = String.Empty;
             OpenFileDialog frm = new OpenFileDialog();
             frm.InitializeLifetimeService();

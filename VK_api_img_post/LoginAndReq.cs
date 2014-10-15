@@ -16,6 +16,9 @@ namespace VK_api_img_post
     class LoginAndReq
     {
         public static List<string> friendsList = new List<string>();
+        public static string log = "";
+        public static int sendMsg = 0;
+        public static int notSendMsg = 0;
 
         public static bool ValidationAuth(string clientID, string login, string pass)
         {
@@ -31,6 +34,8 @@ namespace VK_api_img_post
                 req.AllowAutoRedirect = false;
                 req.Get(data.Substring("<form method=\"post\" action=\"", "\">"));
 
+                string hash = data.Substring("<form method=\"post\" action=\"", "\">");
+
                 char[] symb = { '=', '&' };
                 string[] splitData = req.Response.Location.Split(symb);
 
@@ -38,11 +43,16 @@ namespace VK_api_img_post
                 {
                     string token = splitData[1];
                     string userID = splitData[5];
+                    req.Get(String.Format("https://login.vk.com/?act=logout"));
                     return true;
                 }
                 else
+                {
+                    req.Get(String.Format("https://login.vk.com/?act=logout"));
                     return false;
+                }
 
+                
             }
         }
 
@@ -50,9 +60,6 @@ namespace VK_api_img_post
         {
             using (HttpRequest req = new HttpRequest())
             {
-                int sendMsg = 0;
-                int notSendMsg = 0;
-                
                 //req.UserAgent = HttpHelper.FirefoxUserAgent();
                 CookieDictionary cookie = new CookieDictionary(false);
                 req.Cookies = cookie;
@@ -87,8 +94,8 @@ namespace VK_api_img_post
                 int owner_id = Convert.ToInt32(jObject1["response"]["owner_id"]);
                 string attachments = jObject1["response"]["id"].ToString();
 
-                string log = "ID юзера кем было отправленно: " + owner_id + "\r\nВсего друзей: " + friendsList.Count + "\r\nКому было отправленно:"; //topic at the file
-                StreamWriter sw = new StreamWriter(@"F:\\outLog.txt", true, System.Text.Encoding.UTF8);
+                log = "ID юзера кем было отправленно: " + owner_id + "\r\nВсего друзей: " + friendsList.Count + "\r\nКому было отправленно:"; //topic at the file
+                StreamWriter sw = new StreamWriter(@"D:\\outLog.txt", true, System.Text.Encoding.UTF8);
                 sw.WriteLine(log);
 
                 for (int i = 0; i < friendsList.Count; i++)
@@ -128,14 +135,17 @@ namespace VK_api_img_post
                     Thread.Sleep(randomNum*1000); //random thread sleep between posting the message
                 }
                 log = "\r\n---------------\r\n";
+                sw.WriteLine(log);
                 sw.Close();
 
-                
+                req.Get(String.Format("https://login.vk.com/?act=logout"));
             }
+            
         }
 
         public static void getFriends(HttpRequest req, string token, string userID)
         {
+            friendsList = new List<string>();
             string friendsListJson = req.Get(String.Format("https://api.vk.com/method/friends.get?user_id={0}&v=5.25&access_token={1}", userID, token)).ToString();
             JObject jObjectItems = JObject.Parse(friendsListJson);
             string items = jObjectItems["response"]["items"].ToString();
