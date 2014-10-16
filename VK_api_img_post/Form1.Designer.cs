@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.load_btn = new System.Windows.Forms.Button();
             this.load_pic_btn = new System.Windows.Forms.Button();
             this.start_bnt = new System.Windows.Forms.Button();
@@ -50,13 +51,13 @@
             this.loadedPic_lbl = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.captcha_manual = new System.Windows.Forms.RadioButton();
-            this.captcha_antigate = new System.Windows.Forms.RadioButton();
-            this.antigateKey_TB = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.balance_lbl = new System.Windows.Forms.Label();
             this.check_balance_btn = new System.Windows.Forms.Button();
+            this.balance_lbl = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.antigateKey_TB = new System.Windows.Forms.TextBox();
+            this.captcha_antigate = new System.Windows.Forms.RadioButton();
+            this.captcha_manual = new System.Windows.Forms.RadioButton();
             this.INFO = new System.Windows.Forms.GroupBox();
             this.label11 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
@@ -132,7 +133,6 @@
             this.appID_tb.Name = "appID_tb";
             this.appID_tb.Size = new System.Drawing.Size(100, 20);
             this.appID_tb.TabIndex = 7;
-            this.appID_tb.Text = "4587698";
             // 
             // label3
             // 
@@ -268,6 +268,60 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Капча";
             // 
+            // check_balance_btn
+            // 
+            this.check_balance_btn.Location = new System.Drawing.Point(147, 110);
+            this.check_balance_btn.Name = "check_balance_btn";
+            this.check_balance_btn.Size = new System.Drawing.Size(75, 23);
+            this.check_balance_btn.TabIndex = 17;
+            this.check_balance_btn.Text = "Проверить";
+            this.check_balance_btn.UseVisualStyleBackColor = true;
+            this.check_balance_btn.Click += new System.EventHandler(this.check_balance_btn_Click);
+            // 
+            // balance_lbl
+            // 
+            this.balance_lbl.AutoSize = true;
+            this.balance_lbl.Location = new System.Drawing.Point(48, 116);
+            this.balance_lbl.Name = "balance_lbl";
+            this.balance_lbl.Size = new System.Drawing.Size(13, 13);
+            this.balance_lbl.TabIndex = 16;
+            this.balance_lbl.Text = "0";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(3, 115);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(47, 13);
+            this.label10.TabIndex = 4;
+            this.label10.Text = "Баланс:";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(6, 68);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(75, 13);
+            this.label6.TabIndex = 3;
+            this.label6.Text = "Ключ Antigate";
+            // 
+            // antigateKey_TB
+            // 
+            this.antigateKey_TB.Location = new System.Drawing.Point(6, 86);
+            this.antigateKey_TB.Name = "antigateKey_TB";
+            this.antigateKey_TB.Size = new System.Drawing.Size(216, 20);
+            this.antigateKey_TB.TabIndex = 2;
+            // 
+            // captcha_antigate
+            // 
+            this.captcha_antigate.AutoSize = true;
+            this.captcha_antigate.Location = new System.Drawing.Point(6, 39);
+            this.captcha_antigate.Name = "captcha_antigate";
+            this.captcha_antigate.Size = new System.Drawing.Size(64, 17);
+            this.captcha_antigate.TabIndex = 1;
+            this.captcha_antigate.Text = "Antigate";
+            this.captcha_antigate.UseVisualStyleBackColor = true;
+            // 
             // captcha_manual
             // 
             this.captcha_manual.AutoSize = true;
@@ -280,60 +334,6 @@
             this.captcha_manual.Text = "Вводить капчу руками";
             this.captcha_manual.UseVisualStyleBackColor = true;
             this.captcha_manual.CheckedChanged += new System.EventHandler(this.captcha_manual_CheckedChanged);
-            // 
-            // captcha_antigate
-            // 
-            this.captcha_antigate.AutoSize = true;
-            this.captcha_antigate.Location = new System.Drawing.Point(6, 39);
-            this.captcha_antigate.Name = "captcha_antigate";
-            this.captcha_antigate.Size = new System.Drawing.Size(64, 17);
-            this.captcha_antigate.TabIndex = 1;
-            this.captcha_antigate.Text = "Antigate";
-            this.captcha_antigate.UseVisualStyleBackColor = true;
-            // 
-            // antigateKey_TB
-            // 
-            this.antigateKey_TB.Location = new System.Drawing.Point(6, 86);
-            this.antigateKey_TB.Name = "antigateKey_TB";
-            this.antigateKey_TB.Size = new System.Drawing.Size(216, 20);
-            this.antigateKey_TB.TabIndex = 2;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(6, 68);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(75, 13);
-            this.label6.TabIndex = 3;
-            this.label6.Text = "Ключ Antigate";
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(3, 115);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(47, 13);
-            this.label10.TabIndex = 4;
-            this.label10.Text = "Баланс:";
-            // 
-            // balance_lbl
-            // 
-            this.balance_lbl.AutoSize = true;
-            this.balance_lbl.Location = new System.Drawing.Point(48, 116);
-            this.balance_lbl.Name = "balance_lbl";
-            this.balance_lbl.Size = new System.Drawing.Size(13, 13);
-            this.balance_lbl.TabIndex = 16;
-            this.balance_lbl.Text = "0";
-            // 
-            // check_balance_btn
-            // 
-            this.check_balance_btn.Location = new System.Drawing.Point(147, 110);
-            this.check_balance_btn.Name = "check_balance_btn";
-            this.check_balance_btn.Size = new System.Drawing.Size(75, 23);
-            this.check_balance_btn.TabIndex = 17;
-            this.check_balance_btn.Text = "Проверить";
-            this.check_balance_btn.UseVisualStyleBackColor = true;
-            this.check_balance_btn.Click += new System.EventHandler(this.check_balance_btn_Click);
             // 
             // INFO
             // 
@@ -360,7 +360,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(254, 520);
+            this.ClientSize = new System.Drawing.Size(254, 582);
             this.Controls.Add(this.INFO);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.loadedPic_lbl);
@@ -383,6 +383,9 @@
             this.Controls.Add(this.start_bnt);
             this.Controls.Add(this.load_pic_btn);
             this.Controls.Add(this.load_btn);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximumSize = new System.Drawing.Size(270, 620);
+            this.MinimumSize = new System.Drawing.Size(270, 620);
             this.Name = "Form1";
             this.Text = "VK Img Sender";
             this.groupBox1.ResumeLayout(false);

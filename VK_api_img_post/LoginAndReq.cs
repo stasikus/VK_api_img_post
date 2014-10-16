@@ -19,42 +19,54 @@ namespace VK_api_img_post
         public static string log = "";
         public static int sendMsg = 0;
         public static int notSendMsg = 0;
+        public static string attachments;
         public static string captchaFromForm { get; set; }
 
         public static bool ValidationAuth(string clientID, string login, string pass)
         {
-            using (HttpRequest req = new HttpRequest())
+            try
             {
-                CookieDictionary cookie = new CookieDictionary(false);
-                req.Cookies = cookie;
-                req.Get(String.Format("https://login.vk.com/?act=login&email={0}&pass={1}", login, pass));
-
-                string scope = "notify,friends,photos,audio,video,docs,notes,pages,status,offers,questions,wall,groups,messages,notifications,stats,ads,offline"; //permissions for user
-
-                string data = req.Get("https://oauth.vk.com/authorize?client_id=" + clientID + "&scope=" + scope + "&redirect_uri=http://oauth.vk.com/blank.html&display=touch&response_type=token").ToString();
-                req.AllowAutoRedirect = false;
-                req.Get(data.Substring("<form method=\"post\" action=\"", "\">"));
-
-                string hash = data.Substring("<form method=\"post\" action=\"", "\">");
-
-                char[] symb = { '=', '&' };
-                string[] splitData = req.Response.Location.Split(symb);
-
-                if (splitData.Length > 5) // is user valid
+                using (HttpRequest req = new HttpRequest())
                 {
-                    string token = splitData[1];
-                    string userID = splitData[5];
-                    req.Get(String.Format("https://login.vk.com/?act=logout"));
-                    return true;
-                }
-                else
-                {
-                    req.Get(String.Format("https://login.vk.com/?act=logout"));
-                    return false;
-                }
+                    CookieDictionary cookie = new CookieDictionary(false);
+                    req.Cookies = cookie;
+                    req.Get(String.Format("https://login.vk.com/?act=login&email={0}&pass={1}", login, pass));
 
-                
+                    string scope = "notify,friends,photos,audio,video,docs,notes,pages,status,offers,questions,wall,groups,messages,notifications,stats,ads,offline"; //permissions for user
+
+                    string data = req.Get("https://oauth.vk.com/authorize?client_id=" + clientID + "&scope=" + scope + "&redirect_uri=http://oauth.vk.com/blank.html&display=touch&response_type=token").ToString();
+
+                    req.AllowAutoRedirect = false;
+                    req.Get(data.Substring("<form method=\"post\" action=\"", "\">"));
+
+                    //string hash = data.Substring("<form method=\"post\" action=\"", "\">");
+
+                    char[] symb = { '=', '&' };
+                    string[] splitData = req.Response.Location.Split(symb);
+
+                    //string data1 = req.Get("https://oauth.vk.com/access_token?client_id=" + clientID + "&client_secret=dBJTr8zEZC78XdLPsLD5& code=" + splitData[1] + "").ToString();
+                    
+                    if (splitData.Length > 5) // is user valid
+                    {
+                        string token = splitData[1];
+                        string userID = splitData[5];
+                        req.Get(String.Format("https://login.vk.com/?act=logout"));
+                        return true;
+                    }
+                    else
+                    {
+                        req.Get(String.Format("https://login.vk.com/?act=logout"));
+                        return false;
+                    }
+                }
             }
+            catch (Exception)
+            {
+                MessageBox.Show("AppId is not valid");
+                //throw;
+                return false;
+            }
+            
         }
 
         public static void Auth(string clientID, string login, string pass, string photoPath, int sleepFrom, int sleepTo, string msg, Label sendMsg_l, Label notSendMsg_l, bool captchaType, string antigateKeyTB)
@@ -79,34 +91,39 @@ namespace VK_api_img_post
                 string userID = splitData[5]; //user_id for current user
                 
                 getFriends(req, token, userID); //get friens list
+                if (photoPath != "")
+                {
+                    string photosGetWallUploadServerString = photosGetWallUploadServer(userID, token, req); //get vk URL for upload img
 
-                string photosGetWallUploadServerString = photosGetWallUploadServer(userID, token, req); //get vk URL for upload img
+                    string photosUploadPhotoToURLString = photosUploadPhotoToURL(photosGetWallUploadServerString, photoPath).ToString(); //get data from upload img
 
-                string photosUploadPhotoToURLString = photosUploadPhotoToURL(photosGetWallUploadServerString, photoPath).ToString(); //get data from upload img
+                    JObject jObject = JObject.Parse(photosUploadPhotoToURLString);
+                    string server = jObject["server"].ToString();
+                    string photo = jObject["photo"].ToString();
+                    string hash = jObject["hash"].ToString();
 
-                JObject jObject = JObject.Parse(photosUploadPhotoToURLString);
-                string server = jObject["server"].ToString();
-                string photo = jObject["photo"].ToString();
-                string hash = jObject["hash"].ToString();
+                    string photosSaveWallPhotoString = photosSaveWallPhoto(server, photo, hash, req, token).ToString(); //save img to wall
 
-                string photosSaveWallPhotoString = photosSaveWallPhoto(server, photo, hash, req, token).ToString(); //save img to wall
+                    JObject jObject1 = JObject.Parse(photosSaveWallPhotoString);
+                    //owner_id = Convert.ToInt32(jObject1["response"]["owner_id"]);
+                    attachments = jObject1["response"]["id"].ToString();
+                }
 
-                JObject jObject1 = JObject.Parse(photosSaveWallPhotoString);
-                int owner_id = Convert.ToInt32(jObject1["response"]["owner_id"]);
-                string attachments = jObject1["response"]["id"].ToString();
+                log = "ID юзера кем было отправленно: " + userID + "\r\nВсего друзей: " + friendsList.Count + "\r\nКому было отправленно:"; //topic at the file
+                string sPath = Directory.GetCurrentDirectory();
+                StreamWriter sw = new StreamWriter(@"" + sPath + "\\outLog.txt", true, System.Text.Encoding.UTF8);
+                sw.WriteLine(log);
 
-                //log = "ID юзера кем было отправленно: " + owner_id + "\r\nВсего друзей: " + friendsList.Count + "\r\nКому было отправленно:"; //topic at the file
-                //StreamWriter sw = new StreamWriter(@"D:\\outLog.txt", true, System.Text.Encoding.UTF8);
-                //sw.WriteLine(log);
+                for (int i = 0; i < friendsList.Count; i++)
+               // for (int i = 0; i < 1; i++)
+                {
+                    wallPost(Convert.ToInt32(friendsList[i]), msg, attachments, token, req, sw, sendMsg_l, notSendMsg_l, captchaType, sleepFrom, sleepTo, "", "", antigateKeyTB); //post msg to wall
+                    //wallPost(2483153, msg, attachments, token, req, sw, sendMsg_l, notSendMsg_l, captchaType, sleepFrom, sleepTo, "", "", antigateKeyTB); //post msg to wall
+                }
 
-                //for (int i = 0; i < friendsList.Count; i++)
-                //{
-                //    wallPost(Convert.ToInt32(friendsList[i]), 0, 0, msg, attachments, token, req, sw, sendMsg_l, notSendMsg_l, captchaType, sleepFrom, sleepTo, "", "", antigateKeyTB); //post msg to wall
-                //}
-
-                //log = "\r\n---------------\r\n"; //separator between users log
-                //sw.WriteLine(log);
-                //sw.Close();
+                log = "\r\n---------------\r\n"; //separator between users log
+                sw.WriteLine(log);
+                sw.Close();
 
                 req.Get(String.Format("https://login.vk.com/?act=logout"));
             }
@@ -166,7 +183,7 @@ namespace VK_api_img_post
             return json;  //возвращаем объект класса JObject
         }
 
-        private static string wallPost(int owner_id, int friends_only, int from_group, string message, string attachments, string token, HttpRequest req, StreamWriter sw, Label sendMsg_l, Label notSendMsg_l, bool captchaType, int sleepFrom, int sleepTo, string captcha_key, string captcha_sid, string antigateKeyTB)                    //пост на стенку
+        private static string wallPost(int owner_id, string message, string attachments, string token, HttpRequest req, StreamWriter sw, Label sendMsg_l, Label notSendMsg_l, bool captchaType, int sleepFrom, int sleepTo, string captcha_key, string captcha_sid, string antigateKeyTB)                    //пост на стенку
         {
             if (message == "" && attachments == "") return "Error: message and attachments is empty!";                //не вызывать API, если msg and attach пустые
 
@@ -203,8 +220,6 @@ namespace VK_api_img_post
                 int errorCode = Convert.ToInt32(error["error"]["error_code"]); //get error number (user haven't permissions or this is captcha)
 
                 
-                
-                
                 if (errorCode == 14)
                 {
                     string sid = error["error"]["captcha_sid"].ToString(); //get captcha sid 
@@ -216,7 +231,7 @@ namespace VK_api_img_post
 
                         if (captchaFromForm != "")
                         {
-                            wallPost(owner_id, 0, 0, message, attachments, token, req, sw, sendMsg_l, notSendMsg_l, captchaType, sleepFrom, sleepTo, captchaFromForm, sid, antigateKeyTB);
+                            wallPost(owner_id, message, attachments, token, req, sw, sendMsg_l, notSendMsg_l, captchaType, sleepFrom, sleepTo, captchaFromForm, sid, antigateKeyTB);
                         }
                     }
                     else
@@ -224,7 +239,7 @@ namespace VK_api_img_post
                         string captchaAntigate = Anticaptcha.captchaPic(sid, antigateKeyTB);
                         if (captchaAntigate != null)
                         {
-                            wallPost(owner_id, 0, 0, message, attachments, token, req, sw, sendMsg_l, notSendMsg_l, captchaType, sleepFrom, sleepTo, captchaAntigate, sid, antigateKeyTB);
+                            wallPost(owner_id, message, attachments, token, req, sw, sendMsg_l, notSendMsg_l, captchaType, sleepFrom, sleepTo, captchaAntigate, sid, antigateKeyTB);
                         }
                     }
                 }

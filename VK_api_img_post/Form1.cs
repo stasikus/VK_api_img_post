@@ -22,6 +22,7 @@ namespace VK_api_img_post
 
         public static Dictionary<string, string> validUserDictionary = new Dictionary<string, string>();
         String photoPathLocation = String.Empty;
+       // String pathForLog = String.Empty;
 
         private DialogResult STAShowDialog(FileDialog dialog)
         {
@@ -66,7 +67,10 @@ namespace VK_api_img_post
 
         private void start_bnt_Click(object sender, EventArgs e)
         {
-            if (photoPathLocation != "" && fromSleep_tb.Text != "" && toSleep_tb.Text != "" && msgText_tb.Text != "" && appID_tb.Text != "")
+            sendMsg_lbl.Text = "0";
+            notSendMsg_lbl.Text = "0";
+
+            if (fromSleep_tb.Text != "" && toSleep_tb.Text != "" && msgText_tb.Text != "" && appID_tb.Text != "")
             {
                 Thread mainThread = new Thread((authValidUser));
                 mainThread.IsBackground = true;
@@ -122,7 +126,7 @@ namespace VK_api_img_post
                 LoginAndReq.Auth(appID_tb.Text, validUserDictionary.ElementAt(i).Key, validUserDictionary.ElementAt(i).Value, photoPathLocation, Convert.ToInt32(fromSleep_tb.Text), Convert.ToInt32(toSleep_tb.Text), msgText_tb.Text, sendMsg_lbl, notSendMsg_lbl, inputCaptchaType, antigateKey_TB.Text);
             }
 
-            MessageBox.Show("DONE");
+            MessageBox.Show("Все сообщения отправленно");
         }
 
         private void load_pic_btn_Click(object sender, EventArgs e)
@@ -137,10 +141,12 @@ namespace VK_api_img_post
             {
                 photoPathLocation = frm.FileName;
                 loadedPic_lbl.Text = frm.FileName;
+               // pathForLog = System.IO.Path.GetDirectoryName(photoPathLocation);
             }
             else
             {
                 photoPathLocation = "";
+                //pathForLog = "";
                 loadedPic_lbl.Text = "не выбранно";
             }
 
