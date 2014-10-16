@@ -39,8 +39,6 @@ namespace VK_api_img_post
         {
             LoadList.userDictionary = new Dictionary<string, string>();
             validUserDictionary = new Dictionary<string, string>();
-            int validUsr = 0;
-            int notValidUser = 0;
             validUser_lbl.Text = "0";
             notValidUser_lbl.Text = "0";
             String pathLocation = String.Empty;
@@ -60,46 +58,71 @@ namespace VK_api_img_post
                 LoadList.loadUsersList(path);
             }
 
-            for (int i = 0; i < LoadList.userDictionary.Count; i++)
-            {
-                bool valid = false;
-                valid = LoginAndReq.ValidationAuth(appID_tb.Text, LoadList.userDictionary.ElementAt(i).Key, LoadList.userDictionary.ElementAt(i).Value);
-                //LoginAndReq.Auth(appID_tb.Text, LoadList.userDictionary.ElementAt(i).Key, LoadList.userDictionary.ElementAt(i).Value, photoPathLocation);
-
-                if (valid)
-                {
-                    validUserDictionary.Add(LoadList.userDictionary.ElementAt(i).Key, LoadList.userDictionary.ElementAt(i).Value);
-                    validUser_lbl.Text = (++validUsr).ToString();
-                }
-                else
-                {
-                    notValidUser_lbl.Text = (++notValidUser).ToString();
-                }
-                
-            }
-            //MessageBox.Show("DONE");
+            Thread mainThread = new Thread((checkValidUser));
+            mainThread.IsBackground = true;
+            mainThread.SetApartmentState(ApartmentState.STA);
+            mainThread.Start();           
         }
 
         private void start_bnt_Click(object sender, EventArgs e)
         {
             if (photoPathLocation != "" && fromSleep_tb.Text != "" && toSleep_tb.Text != "" && msgText_tb.Text != "" && appID_tb.Text != "")
             {
-                for (int i = 0; i < validUserDictionary.Count; i++)
-                {
-                    LoginAndReq.Auth(appID_tb.Text, validUserDictionary.ElementAt(i).Key, validUserDictionary.ElementAt(i).Value, photoPathLocation, Convert.ToInt32(fromSleep_tb.Text), Convert.ToInt32(toSleep_tb.Text), msgText_tb.Text, sendMsg_lbl, notSendMsg_lbl);
-
-                    // Thread tr = new Thread(() => LoginAndReq.Auth(appID_tb.Text, validUserDictionary.ElementAt(i).Key, validUserDictionary.ElementAt(i).Value, photoPathLocation, Convert.ToInt32(fromSleep_tb.Text), Convert.ToInt32(toSleep_tb.Text)));
-                    //tr.IsBackground = true;
-                    // tr.Start();
-                    // Thread.Sleep(1000);
-                }
-                MessageBox.Show("DONE");
+                Thread mainThread = new Thread((authValidUser));
+                mainThread.IsBackground = true;
+                mainThread.SetApartmentState(ApartmentState.STA);
+                mainThread.Start();
             }
             else
             {
                 MessageBox.Show("Не все поля заполенны");
             }
             
+        }
+
+        void checkValidUser() //check users if they are valid
+        {
+            int validUsr = 0;
+            int notValidUser = 0;
+
+            for (int i = 0; i < LoadList.userDictionary.Count; i++)
+            {
+                bool valid = false;
+                valid = LoginAndReq.ValidationAuth(appID_tb.Text, LoadList.userDictionary.ElementAt(i).Key, LoadList.userDictionary.ElementAt(i).Value);
+
+                if (valid)
+                {
+                    validUserDictionary.Add(LoadList.userDictionary.ElementAt(i).Key, LoadList.userDictionary.ElementAt(i).Value);
+                    validUser_lbl.BeginInvoke((Action)delegate
+                    {
+                        validUser_lbl.Text = (++validUsr).ToString();
+                    });
+                    
+                }
+                else
+                {
+                    notValidUser_lbl.BeginInvoke((Action)delegate
+                    {
+                        notValidUser_lbl.Text = (++notValidUser).ToString();
+                    });
+                }
+            }
+
+            MessageBox.Show("Проверка юзеров закончена");
+        }
+
+        void authValidUser() //start the thread for posting the messages to wall by valid users
+        {
+            bool inputCaptchaType = true;
+            if (captcha_manual.Checked != true)
+                inputCaptchaType = false;
+
+            for (int i = 0; i < validUserDictionary.Count; i++)
+            {
+                LoginAndReq.Auth(appID_tb.Text, validUserDictionary.ElementAt(i).Key, validUserDictionary.ElementAt(i).Value, photoPathLocation, Convert.ToInt32(fromSleep_tb.Text), Convert.ToInt32(toSleep_tb.Text), msgText_tb.Text, sendMsg_lbl, notSendMsg_lbl, inputCaptchaType, antigateKey_TB.Text);
+            }
+
+            MessageBox.Show("DONE");
         }
 
         private void load_pic_btn_Click(object sender, EventArgs e)
@@ -119,6 +142,35 @@ namespace VK_api_img_post
             {
                 photoPathLocation = "";
                 loadedPic_lbl.Text = "не выбранно";
+            }
+
+        }
+
+        private void captcha_manual_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void check_balance_btn_Click(object sender, EventArgs e)
+        {
+            balance_lbl.Text = "0";
+            Thread tr = new Thread(checkBalance);
+            tr.IsBackground = true;
+            tr.Start();
+        }
+
+        void checkBalance()
+        {
+            try
+            {
+                balance_lbl.BeginInvoke((Action)delegate
+                {
+                    balance_lbl.Text = Anticaptcha.Balance(antigateKey_TB.Text) + " $";
+                });
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Данный ключ не валидный");
             }
 
         }

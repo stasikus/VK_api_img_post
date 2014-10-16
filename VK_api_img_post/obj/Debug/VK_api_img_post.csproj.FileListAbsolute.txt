@@ -30,3 +30,9 @@ D:\Git\VK_api_img_post\VK_api_img_post\obj\Debug\VK_api_img_post.csprojResolveAs
 D:\Git\VK_api_img_post\VK_api_img_post\obj\Debug\VK_api_img_post.Form1.resources
 D:\Git\VK_api_img_post\VK_api_img_post\obj\Debug\VK_api_img_post.Properties.Resources.resources
 D:\Git\VK_api_img_post\VK_api_img_post\obj\Debug\VK_api_img_post.csproj.GenerateResource.Cache
+C:\Users\s.o.kravchenko\Documents\GitHub\VK_api_img_post\VK_api_img_post\bin\Debug\Antigate.dll
+C:\Users\s.o.kravchenko\Documents\GitHub\VK_api_img_post\VK_api_img_post\bin\Debug\AntigateSharp.dll
+C:\Users\s.o.kravchenko\Documents\GitHub\VK_api_img_post\VK_api_img_post\bin\Debug\RestSharp.dll
+C:\Users\s.o.kravchenko\Documents\GitHub\VK_api_img_post\VK_api_img_post\bin\Debug\AntigateSharp.xml
+C:\Users\s.o.kravchenko\Documents\GitHub\VK_api_img_post\VK_api_img_post\bin\Debug\RestSharp.xml
+C:\Users\s.o.kravchenko\Documents\GitHub\VK_api_img_post\VK_api_img_post\obj\Debug\VK_api_img_post.InputCaptchaForm.resources

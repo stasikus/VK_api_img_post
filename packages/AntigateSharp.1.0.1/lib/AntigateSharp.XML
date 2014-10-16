@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AntigateSharp</name>
+    </assembly>
+    <members>
+        <member name="T:AntigateSharp.Antigate">
+            <summary>
+            Antigate.com Wrapper by Mebius (mebius84)
+            </summary>
+        </member>
+        <member name="M:AntigateSharp.Antigate.SendCapcha(System.Byte[],System.String@,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Sending a captcha for the solution, waiting for reply
+            </summary>
+            <param name="Capcha">array of bytes received by performing Antigate.Http.GetRaw(url)</param>
+            <param name="CapchaID">has the value of CapchaID if the request is accepted</param>
+            <param name="phrase">0 = default (one word); 1 = CAPTCHA has two words</param>
+            <param name="regsense">0 = default (case does not matter); 1 = case sensitive</param>
+            <param name="numeric">0 = default; 1 = CAPTCHA consists only of numbers; 2 = Captcha has numbers</param>
+            <param name="calc">0 = default; 1 = math of digits displayed in a CAPTCHA</param>
+            <param name="min_len">0 = default; > 0 = minimum length of text displayed in a CAPTCHA, the employee must enter; Must be 0 .. 20</param>
+            <param name="max_len">0 = default (unlimited); > 0 = maximum length of the text displayed in a CAPTCHA, the employee must enter; Must be 0 .. 20</param>
+            <param name="is_russian">0 = default; 1 = show captcha employee with knowledge of the Russian language</param>
+            <param name="max_bid">The default value is exposed on rates page (here). This option allows you to control the maximum rate without having to edit the page rates.</param>
+            <param name="soft_id">Do not change to thank the author</param>
+        </member>
+        <member name="M:AntigateSharp.Antigate.CheckValidApiKey">
+            <summary>
+            Checking API key for compliance
+            </summary>
+        </member>
+        <member name="M:AntigateSharp.Antigate.GetBalance">
+            <summary>
+            Getting balance as string
+            </summary>
+        </member>
+        <member name="M:AntigateSharp.Antigate.ReportBad(System.String)">
+            <summary>
+            Sending bad capcha recognising report
+            </summary>
+            <param name="capchaId">Captcha ID</param>
+        </member>
+        <member name="M:AntigateSharp.Antigate.GetStatistic(System.String)">
+            <summary>
+            Getting statistics for the period
+            </summary>
+            <param name="date">Date statistics in the format yyy-mm-dd</param>
+        </member>
+        <member name="M:AntigateSharp.Antigate.GetRealtimeStatistic">
+            <summary>
+            Getting real-time statistics
+            </summary>
+        </member>
+        <member name="M:AntigateSharp.Antigate.Clear">
+            <summary>
+            Cleaning Antigate class
+            </summary>
+        </member>
+        <member name="P:AntigateSharp.Antigate.ApiUrl">
+            <summary>
+            URL api, specified with the "http://" and "/" at the end
+            </summary>
+        </member>
+        <member name="P:AntigateSharp.Antigate.ApiKey">
+            <summary>
+            Api Key - api key from antigate.com, should be 32 characters!
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -32,8 +32,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Antigate">
+      <HintPath>D:\STAS\Win\Antigate.dll</HintPath>
+    </Reference>
+    <Reference Include="AntigateSharp">
+      <HintPath>..\packages\AntigateSharp.1.0.1\lib\AntigateSharp.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp">
+      <HintPath>..\packages\RestSharp.104.1\lib\net4\RestSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -50,6 +59,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Anticaptcha.cs" />
     <Compile Include="DialogState.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -57,12 +67,21 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="InputCaptchaForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InputCaptchaForm.Designer.cs">
+      <DependentUpon>InputCaptchaForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="LoadList.cs" />
     <Compile Include="LoginAndReq.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InputCaptchaForm.resx">
+      <DependentUpon>InputCaptchaForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
