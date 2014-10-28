@@ -19,6 +19,7 @@ namespace VK_api_img_post
         public static string log = "";
         public static int sendMsg = 0;
         public static int notSendMsg = 0;
+        public static int hundretCounter = 0;
         public static string attachments;
         public static string captchaFromForm { get; set; }
 
@@ -30,7 +31,7 @@ namespace VK_api_img_post
                 {
                     CookieDictionary cookie = new CookieDictionary(false);
                     req.Cookies = cookie;
-                    req.Get(String.Format("https://login.vk.com/?act=login&email={0}&pass={1}", login, pass));
+                    req.Get(String.Format("https://login.vk.com/?act=login&email={0}&pass={1}", login, System.Web.HttpUtility.UrlEncode(pass,Encoding.GetEncoding(1251))));
 
                     string scope = "notify,friends,photos,audio,video,docs,notes,pages,status,offers,questions,wall,groups,messages,notifications,stats,ads,offline"; //permissions for user
 
@@ -114,11 +115,14 @@ namespace VK_api_img_post
                 StreamWriter sw = new StreamWriter(@"" + sPath + "\\outLog.txt", true, System.Text.Encoding.UTF8);
                 sw.WriteLine(log);
 
+                hundretCounter = 0;
+
                 for (int i = 0; i < friendsList.Count; i++)
-               // for (int i = 0; i < 1; i++)
                 {
+                    if (hundretCounter == 100) //send only 100 msgs
+                        break;
+
                     wallPost(Convert.ToInt32(friendsList[i]), msg, attachments, token, req, sw, sendMsg_l, notSendMsg_l, captchaType, sleepFrom, sleepTo, "", "", antigateKeyTB); //post msg to wall
-                    //wallPost(2483153, msg, attachments, token, req, sw, sendMsg_l, notSendMsg_l, captchaType, sleepFrom, sleepTo, "", "", antigateKeyTB); //post msg to wall
                 }
 
                 log = "\r\n---------------\r\n"; //separator between users log
@@ -210,8 +214,10 @@ namespace VK_api_img_post
                     sendMsg_l.Text = sendMsg.ToString();
                 });
 
+                hundretCounter++; //counter for successfully sent msg 
                 log = owner_id + " - отправленно";
                 sw.WriteLine(log);
+                
                 //MessageBox.Show("Сообщение отправленно");
             }
             else

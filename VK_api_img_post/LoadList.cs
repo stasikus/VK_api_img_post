@@ -16,7 +16,7 @@ namespace VK_api_img_post
         public static void loadUsersList(string path)
         {
             accsList = new List<string>();
-            using (var sr = new StreamReader(path))
+            using (var sr = new StreamReader(path, Encoding.Default))
             {
                 while (sr.Peek() >= 0)
                 {
