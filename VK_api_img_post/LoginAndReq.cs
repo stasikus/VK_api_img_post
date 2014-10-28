@@ -77,7 +77,7 @@ namespace VK_api_img_post
                 //req.UserAgent = HttpHelper.FirefoxUserAgent();
                 CookieDictionary cookie = new CookieDictionary(false);
                 req.Cookies = cookie;
-                req.Get(String.Format("https://login.vk.com/?act=login&email={0}&pass={1}", login, pass));
+                req.Get(String.Format("https://login.vk.com/?act=login&email={0}&pass={1}", login, System.Web.HttpUtility.UrlEncode(pass, Encoding.GetEncoding(1251))));
 
                 string scope = "notify,friends,photos,audio,video,docs,notes,pages,status,offers,questions,wall,groups,messages,notifications,stats,ads,offline";
 
